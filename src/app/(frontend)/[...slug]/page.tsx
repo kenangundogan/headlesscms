@@ -4,11 +4,12 @@ import config from '@payload-config'
 import { parseUrl, parseUrlWithAllPatterns } from '@/utilities/parseUrl'
 import type { Page } from '@/payload-types'
 import type { ParsedUrlData } from '@/utilities/parseUrl'
+import PageClient from './page.client'
 
 interface PageProps {
-    params: {
+    params: Promise<{
         slug: string[]
-    }
+    }>
 }
 
 export default async function DynamicPage({ params }: PageProps) {
@@ -70,6 +71,7 @@ export default async function DynamicPage({ params }: PageProps) {
 
     return (
         <div>
+            <PageClient />
             <h1>📄 Page: {page.title}</h1>
             <div>
                 <p><strong>Collection:</strong> Pages</p>
@@ -140,7 +142,9 @@ export async function generateStaticParams() {
         },
     })
 
-    return pages.docs.map((page) => ({
-        slug: page.url?.split('/').filter(Boolean) || [page.slug],
-    }))
+    return pages.docs
+        .filter((page) => page.url !== '/') // Anasayfayı hariç tut
+        .map((page) => ({
+            slug: page.url?.split('/').filter(Boolean) || [page.slug],
+        }))
 }

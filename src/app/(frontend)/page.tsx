@@ -1,58 +1,53 @@
-import { headers as getHeaders } from 'next/headers.js'
-import Image from 'next/image'
+import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
-import React from 'react'
-import { fileURLToPath } from 'url'
-
-import config from '@/payload.config'
-import './styles.css'
+import config from '@payload-config'
+import type { Page } from '@/payload-types'
 
 export default async function HomePage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
+  const payload = await getPayload({ config })
 
-  const fileURL = `vscode://file/${fileURLToPath(import.meta.url)}`
+  // isHome: true olan sayfayı bul
+  const homePage = await payload.find({
+    collection: 'pages',
+    where: {
+      isHome: {
+        equals: true,
+      },
+    },
+    limit: 1,
+  })
+
+  const page = homePage.docs[0]
+
+  if (!page) {
+    // Eğer anasayfa atanmamışsa standart bir karşılama mesajı göster
+    return (
+      <div style={{ padding: '2rem', textAlign: 'center', fontFamily: 'system-ui' }}>
+        <h1>Welcome to Headless CMS</h1>
+        <p>No homepage set via CMS. Please define a homepage in the admin panel.</p>
+        <a href="/admin" style={{ display: 'inline-block', marginTop: '1rem', padding: '0.5rem 1rem', background: '#333', color: '#fff', textDecoration: 'none', borderRadius: '4px' }}>
+          Go to Admin Panel
+        </a>
+      </div>
+    )
+  }
 
   return (
-    <div className="home">
-      <div className="content">
-        <picture>
-          <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />
-          <Image
-            alt="Payload Logo"
-            height={65}
-            src="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg"
-            width={65}
-          />
-        </picture>
-        {!user && <h1>Welcome to your new project.</h1>}
-        {user && <h1>Welcome back, {user.email}</h1>}
-        <div className="links">
-          <a
-            className="admin"
-            href={payloadConfig.routes.admin}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Go to admin panel
-          </a>
-          <a
-            className="docs"
-            href="https://payloadcms.com/docs"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Documentation
-          </a>
-        </div>
+    <div>
+      <h1>🏠 Homepage: {page.title}</h1>
+      <div>
+        <p><strong>Collection:</strong> Pages</p>
+        <p><strong>Type:</strong> Homepage (isHome=true)</p>
+        <p><strong>Slug:</strong> {page.slug}</p>
+        <p><strong>URL:</strong> {page.url}</p>
+        <p><strong>ID:</strong> {page.id}</p>
+        <p><strong>Created:</strong> {new Date(page.createdAt).toLocaleDateString('tr-TR')}</p>
+        <p><strong>Updated:</strong> {new Date(page.updatedAt).toLocaleDateString('tr-TR')}</p>
       </div>
-      <div className="footer">
-        <p>Update this page by editing</p>
-        <a className="codeLink" href={fileURL}>
-          <code>app/(frontend)/page.tsx</code>
-        </a>
+      <hr />
+      <div>
+        <h2>Content:</h2>
+        <pre>{JSON.stringify(page.content, null, 2)}</pre>
       </div>
     </div>
   )

@@ -1,7 +1,11 @@
 import type { CollectionConfig } from 'payload'
 
 import { revalidateChange, revalidateDelete } from './hooks/revalidate'
-import { populateUrl } from './hooks/populateUrl'
+import { populateUrl } from '@/hooks/populateUrl'
+import { imagesFields } from '@/fields/images'
+import { metaTab } from '@/fields/meta'
+import { metaRefreshTab } from '@/fields/metaRefresh'
+import { ensureUniqueHome } from './hooks/ensureUniqueHome'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -14,11 +18,19 @@ export const Pages: CollectionConfig = {
   },
   fields: [
     {
+      label: 'Başlık',
       name: 'title',
       type: 'text',
       required: true,
     },
     {
+      label: 'Açıklama',
+      name: 'description',
+      type: 'text',
+      required: true,
+    },
+    {
+      label: 'Slug',
       name: 'slug',
       type: 'text',
       required: true,
@@ -27,11 +39,7 @@ export const Pages: CollectionConfig = {
       },
     },
     {
-      name: 'content',
-      type: 'richText',
-      required: true,
-    },
-    {
+      label: 'URL',
       name: 'url',
       type: 'text',
       admin: {
@@ -39,18 +47,42 @@ export const Pages: CollectionConfig = {
         readOnly: true,
         description: 'Otomatik oluşturulan URL',
       },
-      hooks: {
-        beforeChange: [
-          ({ siblingData }) => {
-            // URL hook tarafından doldurulacak
-            return siblingData.url
-          },
-        ],
+    },
+    {
+      label: 'Anasayfa olarak ayarla',
+      name: 'isHome',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
       },
     },
+    {
+      type: 'tabs',
+      tabs: [
+        {
+          name: 'content',
+          label: 'İçerik',
+          fields: [
+            {
+              label: 'İçerik',
+              name: 'content',
+              type: 'richText',
+              required: true,
+            },
+          ],
+        },
+        {
+          label: 'Görseller',
+          fields: [imagesFields],
+        },
+        metaTab,
+        metaRefreshTab,
+      ]
+    }
   ],
   hooks: {
-    beforeChange: [populateUrl],
+    beforeChange: [ensureUniqueHome, populateUrl({ collectionSlug: 'pages' })],
     afterChange: [revalidateChange],
     afterDelete: [revalidateDelete],
   },

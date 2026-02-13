@@ -140,26 +140,61 @@ export interface Media {
 export interface Page {
   id: string;
   title: string;
+  description: string;
   slug: string;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
   /**
    * Otomatik oluşturulan URL
    */
   url?: string | null;
+  isHome?: boolean | null;
+  content: {
+    content: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  images?: {
+    /**
+     * 16x9 görseli (1920x1080)
+     */
+    ratio16x9?: (string | null) | Media;
+    /**
+     * 9x16 görseli (1080x1920)
+     */
+    ratio9x16?: (string | null) | Media;
+    /**
+     * 1x1 görseli (1080x1080)
+     */
+    ratio1x1?: (string | null) | Media;
+  };
+  meta?: {
+    /**
+     * Arama sonuçlarında görünecek başlık
+     */
+    title?: string | null;
+    /**
+     * Arama sonuçlarında görünecek açıklama
+     */
+    description?: string | null;
+    /**
+     * Arama sonuçlarında görünecek görsel
+     */
+    image?: (string | null) | Media;
+  };
+  metaRefresh?: {
+    seconds?: number | null;
+  };
   parent?: (string | null) | Page;
   breadcrumbs?:
     | {
@@ -181,26 +216,60 @@ export interface Page {
 export interface Post {
   id: string;
   title: string;
+  description: string;
   slug: string;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
   /**
    * Otomatik oluşturulan URL
    */
   url?: string | null;
+  content: {
+    content: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  images?: {
+    /**
+     * 16x9 görseli (1920x1080)
+     */
+    ratio16x9?: (string | null) | Media;
+    /**
+     * 9x16 görseli (1080x1920)
+     */
+    ratio9x16?: (string | null) | Media;
+    /**
+     * 1x1 görseli (1080x1080)
+     */
+    ratio1x1?: (string | null) | Media;
+  };
+  meta?: {
+    /**
+     * Arama sonuçlarında görünecek başlık
+     */
+    title?: string | null;
+    /**
+     * Arama sonuçlarında görünecek açıklama
+     */
+    description?: string | null;
+    /**
+     * Arama sonuçlarında görünecek görsel
+     */
+    image?: (string | null) | Media;
+  };
+  metaRefresh?: {
+    seconds?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -462,9 +531,34 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  description?: T;
   slug?: T;
-  content?: T;
   url?: T;
+  isHome?: T;
+  content?:
+    | T
+    | {
+        content?: T;
+      };
+  images?:
+    | T
+    | {
+        ratio16x9?: T;
+        ratio9x16?: T;
+        ratio1x1?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  metaRefresh?:
+    | T
+    | {
+        seconds?: T;
+      };
   parent?: T;
   breadcrumbs?:
     | T
@@ -485,9 +579,33 @@ export interface PagesSelect<T extends boolean = true> {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
+  description?: T;
   slug?: T;
-  content?: T;
   url?: T;
+  content?:
+    | T
+    | {
+        content?: T;
+      };
+  images?:
+    | T
+    | {
+        ratio16x9?: T;
+        ratio9x16?: T;
+        ratio1x1?: T;
+      };
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  metaRefresh?:
+    | T
+    | {
+        seconds?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;

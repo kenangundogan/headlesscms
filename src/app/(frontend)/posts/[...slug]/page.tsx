@@ -4,11 +4,12 @@ import config from '@payload-config'
 import { parseUrl, parseUrlWithAllPatterns, stripPrefix } from '@/utilities/parseUrl'
 import type { Post } from '@/payload-types'
 import type { ParsedUrlData } from '@/utilities/parseUrl'
+import PageClient from './page.client'
 
 interface PostPageProps {
-    params: {
+    params: Promise<{
         slug: string[]
-    }
+    }>
 }
 
 export default async function PostPage({ params }: PostPageProps) {
@@ -73,6 +74,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
     return (
         <div>
+            <PageClient />
             <h1>📝 Post: {post.title}</h1>
             <div>
                 <p><strong>Collection:</strong> Posts</p>
