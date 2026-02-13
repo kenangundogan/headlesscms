@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  labels: {
+    singular: 'Medya',
+    plural: 'Medya',
+  },
   access: {
     read: () => true,
   },
@@ -13,4 +17,11 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: true,
+  versions: {
+    drafts: {
+      schedulePublish: true,
+    },
+    maxPerDoc: 50,
+  },
+  trash: true
 }

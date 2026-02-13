@@ -2,11 +2,11 @@ import type { CollectionConfig } from 'payload'
 
 import { revalidateChange, revalidateDelete } from './hooks/revalidate'
 
-export const Posts: CollectionConfig = {
-  slug: 'posts',
+export const Pages: CollectionConfig = {
+  slug: 'pages',
   labels: {
-    singular: 'Yazı',
-    plural: 'Yazılar',
+    singular: 'Sayfa',
+    plural: 'Sayfalar',
   },
   admin: {
     useAsTitle: 'title',
@@ -44,5 +44,5 @@ export const Posts: CollectionConfig = {
     },
     maxPerDoc: 50,
   },
-  trash: true,
+  trash: true
 }

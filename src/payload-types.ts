@@ -12,54 +12,7 @@
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "supportedTimezones".
  */
-export type SupportedTimezones =
-  | 'Pacific/Midway'
-  | 'Pacific/Niue'
-  | 'Pacific/Honolulu'
-  | 'Pacific/Rarotonga'
-  | 'America/Anchorage'
-  | 'Pacific/Gambier'
-  | 'America/Los_Angeles'
-  | 'America/Tijuana'
-  | 'America/Denver'
-  | 'America/Phoenix'
-  | 'America/Chicago'
-  | 'America/Guatemala'
-  | 'America/New_York'
-  | 'America/Bogota'
-  | 'America/Caracas'
-  | 'America/Santiago'
-  | 'America/Buenos_Aires'
-  | 'America/Sao_Paulo'
-  | 'Atlantic/South_Georgia'
-  | 'Atlantic/Azores'
-  | 'Atlantic/Cape_Verde'
-  | 'Europe/London'
-  | 'Europe/Berlin'
-  | 'Africa/Lagos'
-  | 'Europe/Athens'
-  | 'Africa/Cairo'
-  | 'Europe/Moscow'
-  | 'Asia/Riyadh'
-  | 'Asia/Dubai'
-  | 'Asia/Baku'
-  | 'Asia/Karachi'
-  | 'Asia/Tashkent'
-  | 'Asia/Calcutta'
-  | 'Asia/Dhaka'
-  | 'Asia/Almaty'
-  | 'Asia/Jakarta'
-  | 'Asia/Bangkok'
-  | 'Asia/Shanghai'
-  | 'Asia/Singapore'
-  | 'Asia/Tokyo'
-  | 'Asia/Seoul'
-  | 'Australia/Brisbane'
-  | 'Australia/Sydney'
-  | 'Pacific/Guam'
-  | 'Pacific/Noumea'
-  | 'Pacific/Auckland'
-  | 'Pacific/Fiji';
+export type SupportedTimezones = 'Europe/Istanbul';
 
 export interface Config {
   auth: {
@@ -69,8 +22,11 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    pages: Page;
     posts: Post;
+    redirects: Redirect;
     'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -79,8 +35,11 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -94,7 +53,13 @@ export interface Config {
   locale: null;
   user: User;
   jobs: {
-    tasks: unknown;
+    tasks: {
+      schedulePublish: TaskSchedulePublish;
+      inline: {
+        input: unknown;
+        output: unknown;
+      };
+    };
     workflows: unknown;
   };
 }
@@ -124,6 +89,8 @@ export interface User {
   id: string;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -150,6 +117,8 @@ export interface Media {
   alt: string;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
   url?: string | null;
   thumbnailURL?: string | null;
   filename?: string | null;
@@ -162,11 +131,49 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  title: string;
+  slug: string;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  parent?: (string | null) | Page;
+  breadcrumbs?:
+    | {
+        doc?: (string | null) | Page;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
 export interface Post {
   id: string;
   title: string;
+  slug: string;
   content: {
     root: {
       type: string;
@@ -184,6 +191,36 @@ export interface Post {
   };
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: string;
+  from: string;
+  to?: {
+    type?: ('reference' | 'custom') | null;
+    reference?:
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null)
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null);
+    url?: string | null;
+  };
+  /**
+   * 301 kalıcı, 302 geçici yönlendirme için kullanılır
+   */
+  type: '301' | '302';
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -204,6 +241,98 @@ export interface PayloadKv {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs".
+ */
+export interface PayloadJob {
+  id: string;
+  /**
+   * Input data provided to the job
+   */
+  input?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  taskStatus?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  completedAt?: string | null;
+  totalTried?: number | null;
+  /**
+   * If hasError is true this job will not be retried
+   */
+  hasError?: boolean | null;
+  /**
+   * If hasError is true, this is the error that caused it
+   */
+  error?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Task execution log
+   */
+  log?:
+    | {
+        executedAt: string;
+        completedAt: string;
+        taskSlug: 'inline' | 'schedulePublish';
+        taskID: string;
+        input?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        output?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        state: 'failed' | 'succeeded';
+        error?:
+          | {
+              [k: string]: unknown;
+            }
+          | unknown[]
+          | string
+          | number
+          | boolean
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  taskSlug?: ('inline' | 'schedulePublish') | null;
+  queue?: string | null;
+  waitUntil?: string | null;
+  processing?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -218,8 +347,16 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
+        relationTo: 'pages';
+        value: string | Page;
+      } | null)
+    | ({
         relationTo: 'posts';
         value: string | Post;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: string | Redirect;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -270,6 +407,8 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
@@ -293,6 +432,8 @@ export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
   url?: T;
   thumbnailURL?: T;
   filename?: T;
@@ -305,13 +446,56 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  content?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
+  slug?: T;
   content?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?:
+    | T
+    | {
+        type?: T;
+        reference?: T;
+        url?: T;
+      };
+  type?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -320,6 +504,37 @@ export interface PostsSelect<T extends boolean = true> {
 export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-jobs_select".
+ */
+export interface PayloadJobsSelect<T extends boolean = true> {
+  input?: T;
+  taskStatus?: T;
+  completedAt?: T;
+  totalTried?: T;
+  hasError?: T;
+  error?: T;
+  log?:
+    | T
+    | {
+        executedAt?: T;
+        completedAt?: T;
+        taskSlug?: T;
+        taskID?: T;
+        input?: T;
+        output?: T;
+        state?: T;
+        error?: T;
+        id?: T;
+      };
+  taskSlug?: T;
+  queue?: T;
+  waitUntil?: T;
+  processing?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -352,6 +567,36 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSchedulePublish".
+ */
+export interface TaskSchedulePublish {
+  input: {
+    type?: ('publish' | 'unpublish') | null;
+    locale?: string | null;
+    doc?:
+      | ({
+          relationTo: 'users';
+          value: string | User;
+        } | null)
+      | ({
+          relationTo: 'media';
+          value: string | Media;
+        } | null)
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    global?: string | null;
+    user?: (string | null) | User;
+  };
+  output?: unknown;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -1,0 +1,67 @@
+import { getServerSideSitemap } from 'next-sitemap'
+import { getPayload } from 'payload'
+import config from '@payload-config'
+import { unstable_cache } from 'next/cache'
+
+const getPagesSitemap = unstable_cache(
+  async () => {
+    const payload = await getPayload({ config })
+    const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+
+    const results = await payload.find({
+      collection: 'pages',
+      overrideAccess: true,
+      draft: false,
+      depth: 0,
+      limit: 1000,
+      pagination: false,
+      where: {
+        _status: {
+          equals: 'published',
+        },
+      },
+      select: {
+        slug: true,
+        updatedAt: true,
+        breadcrumbs: true,
+      },
+    })
+
+    const dateFallback = new Date().toISOString()
+
+    const defaultSitemap = [
+      {
+        loc: `${SITE_URL}/search`,
+        lastmod: dateFallback,
+      },
+      {
+        loc: `${SITE_URL}/posts`,
+        lastmod: dateFallback,
+      },
+    ]
+
+    const sitemap = results.docs
+      ? results.docs
+        .filter((page) => Boolean(page?.slug))
+        .map((page) => {
+          const url = page?.breadcrumbs?.[page.breadcrumbs.length - 1]?.url || `/${page.slug}`
+          return {
+            loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}${url}`,
+            lastmod: page.updatedAt || dateFallback,
+          }
+        })
+      : []
+
+    return [...defaultSitemap, ...sitemap]
+  },
+  ['pages-sitemap'],
+  {
+    tags: ['pages-sitemap'],
+  },
+)
+
+export async function GET() {
+  const sitemap = await getPagesSitemap()
+
+  return getServerSideSitemap(sitemap)
+}

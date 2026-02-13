@@ -7,7 +7,11 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+
+import { i18n } from './payload.languages'
+import { plugins } from './payload.plugin'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -18,8 +22,17 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    timezones: {
+      supportedTimezones: [
+        {
+          label: 'Istanbul',
+          value: 'Europe/Istanbul',
+        },
+      ],
+      defaultTimezone: 'Europe/Istanbul',
+    },
   },
-  collections: [Users, Media, Posts],
+  collections: [Users, Media, Pages, Posts],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -29,5 +42,8 @@ export default buildConfig({
     url: process.env.DATABASE_URL || '',
   }),
   sharp,
-  plugins: [],
+  i18n,
+  plugins: [
+    ...plugins,
+  ],
 })
