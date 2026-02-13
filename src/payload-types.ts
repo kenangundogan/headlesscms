@@ -48,8 +48,12 @@ export interface Config {
     defaultIDType: string;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'url-structures': UrlStructure;
+  };
+  globalsSelect: {
+    'url-structures': UrlStructuresSelect<false> | UrlStructuresSelect<true>;
+  };
   locale: null;
   user: User;
   jobs: {
@@ -152,6 +156,10 @@ export interface Page {
     };
     [k: string]: unknown;
   };
+  /**
+   * Otomatik oluşturulan URL
+   */
+  url?: string | null;
   parent?: (string | null) | Page;
   breadcrumbs?:
     | {
@@ -189,6 +197,10 @@ export interface Post {
     };
     [k: string]: unknown;
   };
+  /**
+   * Otomatik oluşturulan URL
+   */
+  url?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -452,6 +464,7 @@ export interface PagesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   content?: T;
+  url?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -474,6 +487,7 @@ export interface PostsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   content?: T;
+  url?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -567,6 +581,34 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "url-structures".
+ */
+export interface UrlStructure {
+  id: string;
+  /**
+   * Sayfalar için URL yapısını belirleyin.
+   */
+  pagesUrlStructure?: ('slug' | 'slugId' | 'dateSlug' | 'dateSlugId' | 'archiveSlug' | 'archiveSlugId') | null;
+  /**
+   * Yazılar için URL yapısını belirleyin. URL'ler /posts/ öneki ile oluşturulur.
+   */
+  postsUrlStructure?: ('slug' | 'slugId' | 'dateSlug' | 'dateSlugId' | 'archiveSlug' | 'archiveSlugId') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "url-structures_select".
+ */
+export interface UrlStructuresSelect<T extends boolean = true> {
+  pagesUrlStructure?: T;
+  postsUrlStructure?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

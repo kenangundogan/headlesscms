@@ -9,6 +9,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { UrlStructures } from './globals/UrlStructures'
 
 import { i18n } from './payload.languages'
 import { plugins } from './payload.plugin'
@@ -33,6 +34,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages, Posts],
+  globals: [UrlStructures],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

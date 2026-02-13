@@ -23,36 +23,25 @@ const getPagesSitemap = unstable_cache(
       select: {
         slug: true,
         updatedAt: true,
-        breadcrumbs: true,
+        url: true,
       },
     })
 
     const dateFallback = new Date().toISOString()
 
-    const defaultSitemap = [
-      {
-        loc: `${SITE_URL}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/posts`,
-        lastmod: dateFallback,
-      },
-    ]
-
     const sitemap = results.docs
       ? results.docs
         .filter((page) => Boolean(page?.slug))
         .map((page) => {
-          const url = page?.breadcrumbs?.[page.breadcrumbs.length - 1]?.url || `/${page.slug}`
+          const url = page?.url || `/${page.slug}`
           return {
-            loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}${url}`,
+            loc: `${SITE_URL}${url}`,
             lastmod: page.updatedAt || dateFallback,
           }
         })
       : []
 
-    return [...defaultSitemap, ...sitemap]
+    return sitemap
   },
   ['pages-sitemap'],
   {
