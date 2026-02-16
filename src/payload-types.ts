@@ -192,9 +192,7 @@ export interface Page {
      */
     image?: (string | null) | Media;
   };
-  metaRefresh?: {
-    seconds?: number | null;
-  };
+  metaRefresh?: number | null;
   parent?: (string | null) | Page;
   breadcrumbs?:
     | {
@@ -267,9 +265,23 @@ export interface Post {
      */
     image?: (string | null) | Media;
   };
-  metaRefresh?: {
-    seconds?: number | null;
-  };
+  metaRefresh?: number | null;
+  breadcrumbs?:
+    | {
+        doc?:
+          | ({
+              relationTo: 'pages';
+              value: string | Page;
+            } | null)
+          | ({
+              relationTo: 'posts';
+              value: string | Post;
+            } | null);
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -554,11 +566,7 @@ export interface PagesSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  metaRefresh?:
-    | T
-    | {
-        seconds?: T;
-      };
+  metaRefresh?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -601,10 +609,14 @@ export interface PostsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  metaRefresh?:
+  metaRefresh?: T;
+  breadcrumbs?:
     | T
     | {
-        seconds?: T;
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

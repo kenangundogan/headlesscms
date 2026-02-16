@@ -5,19 +5,13 @@ export const metaRefreshTab: Tab = {
     fields: [
         {
             name: 'metaRefresh',
-            type: 'group',
-            fields: [
-                {
-                    name: 'seconds',
-                    label: 'Yenileme Süresi (Saniye)',
-                    type: 'number',
-                    min: 180,
-                    max: 86400,
-                    admin: {
-                        placeholder: 'Otomatik yenileme için saniye girin (Örn: 180)',
-                    },
-                },
-            ],
+            label: 'Yenileme Süresi (Saniye)',
+            type: 'number',
+            min: 180,
+            max: 86400,
+            admin: {
+                placeholder: 'Otomatik yenileme için saniye girin (Örn: 180)',
+            },
         },
     ],
 }

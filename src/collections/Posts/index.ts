@@ -5,6 +5,8 @@ import { populateUrl } from '@/hooks/populateUrl'
 import { imagesFields } from '@/fields/images'
 import { metaTab } from '@/fields/meta'
 import { metaRefreshTab } from '@/fields/metaRefresh'
+import { breadcrumbsField } from '@/fields/breadcrumbs'
+import { populateBreadcrumbs } from '@/hooks/populateBreadcrumbs'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
@@ -68,11 +70,18 @@ export const Posts: CollectionConfig = {
         },
         metaTab,
         metaRefreshTab,
+        {
+          label: 'Breadcrumbs',
+          fields: [breadcrumbsField],
+        },
       ]
     }
   ],
   hooks: {
-    beforeChange: [populateUrl({ collectionSlug: 'posts', prefix: 'posts' })],
+    beforeChange: [
+      populateUrl({ collectionSlug: 'posts', prefix: 'posts' }),
+      populateBreadcrumbs({ collectionLabel: 'Yazılar', collectionUrl: '/posts', collectionSlug: 'posts' }),
+    ],
     afterChange: [revalidateChange],
     afterDelete: [revalidateDelete],
   },
