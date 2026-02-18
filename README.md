@@ -1,67 +1,139 @@
-# Payload Blank Template
+# Headless CMS
 
-This template comes configured with the bare minimum to get started on anything you need.
+Payload CMS 3 + Next.js 15 ile geliştirilmiş, modüler ve genişletilebilir bir Headless CMS altyapısı.
 
-## Quick start
+## Teknolojiler
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- **Payload CMS** 3.76 — Backend & Admin Panel
+- **Next.js** 15 — Frontend & API Routes
+- **MongoDB** — Veritabanı
+- **TypeScript** — Tip güvenliği
+- **Sharp** — Görsel işleme
 
-## Quick Start - local setup
+## Kurulum
 
-To spin up this template locally, follow these steps:
+```bash
+pnpm install
+cp .env.example .env  # Ortam değişkenlerini yapılandırın
+```
 
-### Clone
+### Geliştirme
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+```bash
+pnpm dev
+```
 
-### Development
+### Production
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+```bash
+pnpm build
+pnpm start
+```
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+Admin paneli: `http://localhost:3000/admin`
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+## Proje Yapisi
 
-#### Docker (Optional)
+```
+src/
+├── app/
+│   ├── (frontend)/          # Frontend route'ları
+│   │   ├── [...slug]/       # Dinamik sayfa route'ları
+│   │   ├── posts/           # Post sayfaları
+│   │   ├── rss/             # RSS feed endpoint'leri
+│   │   └── sitemap/         # Sitemap endpoint'leri
+│   ├── robots.txt/          # Robots.txt route
+│   └── (payload)/           # Payload admin & API
+├── collections/             # Koleksiyon tanımları
+│   ├── Pages/
+│   ├── Posts/
+│   ├── Media/
+│   └── Users/
+├── globals/                 # Global ayarlar
+│   ├── SitemapSettings.ts
+│   ├── RssSettings.ts
+│   ├── RobotsTxt.ts
+│   └── UrlStructures.ts
+├── fields/                  # Paylaşılan alan tanımları
+│   ├── breadcrumbs.ts
+│   ├── images.ts
+│   ├── meta.ts
+│   └── metaRefresh.ts
+├── hooks/                   # Payload hook'ları
+│   ├── populateUrl.ts
+│   └── populateBreadcrumbs.ts
+└── utilities/               # Yardımcı fonksiyonlar
+    ├── generateCollectionRSS.ts
+    ├── getCollectionSitemapFields.ts
+    ├── generateUrl.ts
+    ├── parseUrl.ts
+    ├── escapeXml.ts
+    └── validateMedia.ts
+```
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+## Ozellikler
 
-To do so, follow these steps:
+### URL Yonetimi
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+- `populateUrl` hook'u ile koleksiyon bazlı dinamik URL oluşturma
+- `isHome` desteği (anasayfa olarak ayarlama)
+- URL çakışma kontrolü
+- Eski URL yapıları için fallback routing
 
-## How it works
+### Breadcrumbs
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+- Pages: `nestedDocsPlugin` entegrasyonu (hiyerarşik yapı)
+- Posts: Özel `populateBreadcrumbs` hook'u
+- Standart API çıktısı: `{ doc, url, label }`
 
-### Collections
+### SEO & Meta
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+- Koleksiyon bazlı Meta alanları (başlık, açıklama, görsel)
+- Meta Refresh ayarları
+- Dinamik `generateMetadata` desteği
 
-- #### Users (Authentication)
+### Sitemap
 
-  Users are auth-enabled collections that have access to the admin panel.
+- `/sitemap` — Aktif koleksiyonların sitemap index'i
+- `/sitemap/posts.xml` — Koleksiyon bazlı sitemap
+- Admin panelden koleksiyon bazlı açma/kapama (`SitemapSettings`)
+- `unstable_cache` + `revalidateTag` ile cache yönetimi
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+### RSS
 
-- #### Media
+- `/rss` — Aktif feed'lerin index'i
+- `/rss/posts.xml` — Koleksiyon bazlı RSS 2.0 feed
+- Media namespace desteği (görsel metadata)
+- Admin panelden koleksiyon bazlı açma/kapama (`RssSettings`)
+- `unstable_cache` + `revalidateTag` ile cache yönetimi
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+### Robots.txt
 
-### Docker
+- `/robots.txt` — Admin panelden yönetilebilir kurallar
+- User-Agent, Allow, Disallow tanımları
+- Otomatik Sitemap referansı
+- Cache + revalidation desteği
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+### Cache & Revalidation
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+Tüm SEO endpoint'leri aynı pattern'ı takip eder:
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+1. `unstable_cache` ile 1 saat cache
+2. İçerik güncellendiğinde `afterChange` hook'u ile anında revalidation
+3. Ayarlar değiştiğinde ilgili tüm cache tag'leri invalidate edilir
 
-## Questions
+### Gorsel Yonetimi
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+- Özel oranlı görsel alanları (16:9, 9:16, 1:1)
+- Upload sırasında boyut validasyonu
+
+## Scriptler
+
+| Script | Aciklama |
+|---|---|
+| `pnpm dev` | Geliştirme sunucusu |
+| `pnpm build` | Production build |
+| `pnpm start` | Production sunucusu |
+| `pnpm generate:types` | Payload tip dosyalarını oluştur |
+| `pnpm lint` | ESLint kontrolü |
+| `pnpm test` | Tüm testleri çalıştır |

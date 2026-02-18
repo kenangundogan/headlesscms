@@ -41,9 +41,6 @@ importers:
       next:
         specifier: 15.4.11
         version: 15.4.11(@babel/core@7.29.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4)
-      next-sitemap:
-        specifier: ^4.2.3
-        version: 4.2.3(next@15.4.11(@babel/core@7.29.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4))
       payload:
         specifier: 3.76.1
         version: 3.76.1(graphql@16.12.0)(typescript@5.7.3)
@@ -213,9 +210,6 @@ packages:
 
   '@borewit/text-codec@0.2.1':
     resolution: {integrity: sha512-k7vvKPbf7J2fZ5klGRD9AeKfUvojuZIQ3BT5u7Jfv+puwXkUBUT5PVyMDfJZpy30CBDXGMgw7fguK/lpOMBvgw==}
-
-  '@corex/deepmerge@4.0.43':
-    resolution: {integrity: sha512-N8uEMrMPL0cu/bdboEWpQYb/0i2K5Qn8eCsxzOmxSggJbbQte7ljMRoXm917AbntqTGOzdTu+vP3KOOzoC70HQ==}
 
   '@csstools/color-helpers@6.0.1':
     resolution: {integrity: sha512-NmXRccUJMk2AWA5A7e5a//3bCIMyOu2hAtdRYrhPPHjDxINuCwX1w6rnIZ4xjLcp0ayv6h8Pc3X0eJUGiAAXHQ==}
@@ -948,9 +942,6 @@ packages:
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
-
-  '@next/env@13.5.11':
-    resolution: {integrity: sha512-fbb2C7HChgM7CemdCY+y3N1n8pcTKdqtQLbC7/EQtPdLvlMUT9JX/dBYl8MMZAtYG4uVMyPFHXckb68q/NRwqg==}
 
   '@next/env@15.4.11':
     resolution: {integrity: sha512-mIYp/091eYfPFezKX7ZPTWqrmSXq+ih6+LcUyKvLmeLQGhlPtot33kuEOd4U+xAA7sFfj21+OtCpIZx0g5SpvQ==}
@@ -2817,13 +2808,6 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  next-sitemap@4.2.3:
-    resolution: {integrity: sha512-vjdCxeDuWDzldhCnyFCQipw5bfpl4HmZA7uoo3GAaYGjGgfL4Cxb1CiztPuWGmS+auYs7/8OekRS8C2cjdAsjQ==}
-    engines: {node: '>=14.18'}
-    hasBin: true
-    peerDependencies:
-      next: '*'
-
   next@15.4.11:
     resolution: {integrity: sha512-IJRyXal45mIsshZI5XJne/intjusslUP1F+FHVBIyMGEqbYtIq1Irdx5vdWBBg58smviPDycmDeV6txsfkv1RQ==}
     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
@@ -3881,8 +3865,6 @@ snapshots:
 
   '@borewit/text-codec@0.2.1': {}
 
-  '@corex/deepmerge@4.0.43': {}
-
   '@csstools/color-helpers@6.0.1': {}
 
   '@csstools/css-calc@3.1.0(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
@@ -4569,8 +4551,6 @@ snapshots:
       '@emnapi/runtime': 1.8.1
       '@tybys/wasm-util': 0.10.1
     optional: true
-
-  '@next/env@13.5.11': {}
 
   '@next/env@15.4.11': {}
 
@@ -6759,14 +6739,6 @@ snapshots:
   napi-postinstall@0.3.4: {}
 
   natural-compare@1.4.0: {}
-
-  next-sitemap@4.2.3(next@15.4.11(@babel/core@7.29.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4)):
-    dependencies:
-      '@corex/deepmerge': 4.0.43
-      '@next/env': 13.5.11
-      fast-glob: 3.3.1
-      minimist: 1.2.8
-      next: 15.4.11(@babel/core@7.29.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4)
 
   next@15.4.11(@babel/core@7.29.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4):
     dependencies:

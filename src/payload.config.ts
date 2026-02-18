@@ -10,6 +10,9 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { UrlStructures } from './globals/UrlStructures'
+import { SitemapSettings } from './globals/SitemapSettings'
+import { RssSettings } from './globals/RssSettings'
+import { RobotsTxt } from './globals/RobotsTxt'
 
 import { i18n } from './payload.languages'
 import { plugins } from './payload.plugin'
@@ -34,7 +37,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Pages, Posts],
-  globals: [UrlStructures],
+  globals: [UrlStructures, SitemapSettings, RssSettings, RobotsTxt],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

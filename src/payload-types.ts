@@ -50,9 +50,15 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'url-structures': UrlStructure;
+    'sitemap-settings': SitemapSetting;
+    'rss-settings': RssSetting;
+    'robots-txt': RobotsTxt;
   };
   globalsSelect: {
     'url-structures': UrlStructuresSelect<false> | UrlStructuresSelect<true>;
+    'sitemap-settings': SitemapSettingsSelect<false> | SitemapSettingsSelect<true>;
+    'rss-settings': RssSettingsSelect<false> | RssSettingsSelect<true>;
+    'robots-txt': RobotsTxtSelect<false> | RobotsTxtSelect<true>;
   };
   locale: null;
   user: User;
@@ -731,11 +737,100 @@ export interface UrlStructure {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sitemap-settings".
+ */
+export interface SitemapSetting {
+  id: string;
+  /**
+   * Sitemap oluşturulmasını istediğiniz koleksiyonları seçin.
+   */
+  enabledCollections?: ('pages' | 'posts')[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rss-settings".
+ */
+export interface RssSetting {
+  id: string;
+  /**
+   * RSS yayını yapılmasını istediğiniz koleksiyonları seçin.
+   */
+  enabledCollections?: ('pages' | 'posts')[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "robots-txt".
+ */
+export interface RobotsTxt {
+  id: string;
+  rules?:
+    | {
+        /**
+         * Örn: * veya Googlebot
+         */
+        userAgent: string;
+        /**
+         * Her satıra bir yol giriniz. Örn: /
+         */
+        allow?: string | null;
+        /**
+         * Her satıra bir yol giriniz. Örn: /admin/
+         */
+        disallow?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "url-structures_select".
  */
 export interface UrlStructuresSelect<T extends boolean = true> {
   pagesUrlStructure?: T;
   postsUrlStructure?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sitemap-settings_select".
+ */
+export interface SitemapSettingsSelect<T extends boolean = true> {
+  enabledCollections?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rss-settings_select".
+ */
+export interface RssSettingsSelect<T extends boolean = true> {
+  enabledCollections?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "robots-txt_select".
+ */
+export interface RobotsTxtSelect<T extends boolean = true> {
+  rules?:
+    | T
+    | {
+        userAgent?: T;
+        allow?: T;
+        disallow?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
