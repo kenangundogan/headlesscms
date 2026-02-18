@@ -72,7 +72,7 @@ export default async function DynamicPage({ params }: PageProps) {
     return (
         <div>
             <PageClient />
-            <h1>📄 Page: {page.title}</h1>
+            <h1 className='bg-red-500 text-white p-2'>📄 Page: {page.title}</h1>
             <div>
                 <p><strong>Collection:</strong> Pages</p>
                 <p><strong>Lookup Method:</strong> {lookupMethod}</p>
